@@ -11,6 +11,11 @@ class Player
     end
 
 
+    if warrior.feel.captive?
+      warrior.rescue!
+      return
+    end
+
     warrior.feel.empty? ? warrior.walk! : warrior.attack!
 
     @hp = warrior.health
