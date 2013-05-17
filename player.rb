@@ -24,8 +24,7 @@ class Player
 
 
     if @feels[@current_dir] == "wall"
-      change_dir
-      warrior.walk! @current_dir
+      warrior.pivot!
     elsif @feels[@current_dir] == "Captive"
       warrior.rescue! @current_dir
       return
@@ -41,7 +40,7 @@ class Player
   def play_turn(warrior)
 
     @hp ||= 20
-    @current_dir ||= :backward
+    @current_dir ||= :forward
     @feels = {
       :forward => warrior.feel(:forward).to_s,
       :backward => warrior.feel(:backward).to_s,
