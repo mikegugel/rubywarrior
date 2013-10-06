@@ -1,5 +1,53 @@
 class Player
 
+  def play_turn(warrior)
+
+    @hp ||= 20
+    @current_dir ||= :forward
+    @action = rest!
+
+    @look = {
+      :forward => warrior.look(:forward),
+      :backward => warrior.look(:backward),
+      :left => warrior.look(:left),
+      :right => warrior.look(:right)
+    }
+
+    puts "Forward: #{@look[:forward].join(", ")}"
+    puts "Backward: #{@look[:backward].join(", ")}"
+
+    # check_hp(warrior)
+    # check_look(warrior)
+
+    # @action
+    # warrior.shoot!
+    # Save health for comparison next turn
+    @hp = warrior.health
+  end
+
+  def check_hp(warrior)
+    if warrior.health >= @hp && warrior.health < 20
+      @action = warrior.rest!
+      return
+   elsif warrior.health < @hp && warrior.health < 10
+     change_dir
+     @action = warrior.walk! @current_dir
+     change_dir
+     return
+   end
+  end
+
+  def check_look(warrior)
+    if @look[:forward].to_s.include?('Wizard')
+      @action = warrior.shoot!
+      return
+    elsif @look[:forward].to_s.first == "Captive"
+      @action = warrior.rescue! @current_dir
+      return
+    else
+      @action = warrior.attack! @current_dir
+    end
+  end
 
   def change_dir
     if @current_dir  == :backward
@@ -9,48 +57,6 @@ class Player
     end
   end
 
-
-  def move(warrior)
-
-    if warrior.health >= @hp && warrior.health < 20
-      warrior.rest!
-      return
-    elsif warrior.health < @hp && warrior.health < 10
-      change_dir
-      warrior.walk! @current_dir
-      change_dir
-      return
-    end
-
-
-    if @feels[@current_dir] == "wall"
-      warrior.pivot!
-    elsif @feels[@current_dir] == "Captive"
-      warrior.rescue! @current_dir
-      return
-    elsif @feels[@current_dir] == "nothing"
-      warrior.walk! @current_dir
-    else
-      warrior.attack! @current_dir
-    end
-
-  end
-
-
-  def play_turn(warrior)
-
-    @hp ||= 20
-    @current_dir ||= :forward
-    @feels = {
-      :forward => warrior.feel(:forward).to_s,
-      :backward => warrior.feel(:backward).to_s,
-      :left => warrior.feel(:left).to_s,
-      :right => warrior.feel(:right).to_s
-    }
-
-    move(warrior)
-
-    # Save health for comparison next turn
-    @hp = warrior.health
-  end
 end
+
+
